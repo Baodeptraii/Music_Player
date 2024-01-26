@@ -1,1 +1,3 @@
-# Music_Player
+# Fake Music Player
+Using HTML, CSS, JS only
+Thank F8, Chat-GPT and more ...
