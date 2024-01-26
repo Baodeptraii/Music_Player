@@ -13,6 +13,7 @@ const repeatBtn = $('.btn-repeat');
 const playlist = $('.playlist');
 const volume = $('#volumeSlider');
 const download = $('#download');
+var volumeIcon = document.querySelector(".volume-control i");
 // console.log(download);
 
 const app = {
@@ -260,9 +261,21 @@ const app = {
         
 
         // Điều chỉnh volume
-        volume.onchange = function () {
-            audio.volume = volume.value / 100;
-        }
+        volume.oninput = function () {
+            var currentVolume = volume.value / 100;
+            
+            // Điều chỉnh âm lượng của audio
+            audio.volume = currentVolume;
+        
+            // Kiểm tra nếu âm lượng là 0, thay đổi biểu tượng volume
+            if (currentVolume === 0) {
+                volumeIcon.classList.remove("fa-volume-up");
+                volumeIcon.classList.add("fa-volume-off");
+            } else {
+                volumeIcon.classList.remove("fa-volume-off");
+                volumeIcon.classList.add("fa-volume-up");
+            }
+        };
 
         // Hiện thời gian đang phát
         progress.addEventListener('mouseover', function () {
