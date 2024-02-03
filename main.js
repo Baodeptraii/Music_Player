@@ -14,7 +14,19 @@ const playlist = $('.playlist');
 const volume = $('#volumeSlider');
 const download = $('#download');
 var volumeIcon = document.querySelector(".volume-control i");
-// console.log(download);
+const startTime = $('.current-time');
+const endTime = $('.end-time');
+
+
+// console.log(e);
+
+function formatTime(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const remainderSeconds = seconds % 60;
+    
+    const formattedTime = `${minutes}:${remainderSeconds.toString().padStart(2, '0')}`;
+    return formattedTime;
+}
 
 const app = {
     isPLaying: false,
@@ -107,12 +119,14 @@ const app = {
         });
 
         playlist.innerHTML = htmls.join('');
+        
+       
     },
 
     handleEvent: function () {
         const _this = this;
         const cdWidth = cd.offsetWidth;
-
+        
 
         // CUỘN 
         document.onscroll = () => {
@@ -150,6 +164,7 @@ const app = {
             _this.isPlaying = false;
             player.classList.remove('playing');
             myCD.pause();
+            
         }
 
         // Thanh trạng thái
@@ -158,11 +173,14 @@ const app = {
                 const duration = Math.floor(audio.currentTime / audio.duration * 100);
                 // console.log(duration);
                 progress.value = duration;
+
+                startTime.textContent = formatTime( Math.floor(audio.currentTime) );
+                endTime.textContent = formatTime( Math.floor(audio.duration) );
             }
         }
 
         //Tua
-        progress.onchange = function () {
+        progress.oninput = function () {
             audio.currentTime = progress.value / 100 * audio.duration;
         }
 
@@ -269,22 +287,26 @@ const app = {
         
             // Kiểm tra nếu âm lượng là 0, thay đổi biểu tượng volume
             if (currentVolume === 0) {
+                volumeIcon.classList.remove("fa-volume-down");
                 volumeIcon.classList.remove("fa-volume-up");
+
                 volumeIcon.classList.add("fa-volume-off");
-            } else {
+            } else if (currentVolume >0 && currentVolume <= 0.5){
                 volumeIcon.classList.remove("fa-volume-off");
+                volumeIcon.classList.remove("fa-volume-up");
+                volumeIcon.classList.add("fa-volume-down");
+            } else {
+                volumeIcon.classList.remove("fa-volume-down");
+                volumeIcon.classList.remove("fa-volume-off");
+
                 volumeIcon.classList.add("fa-volume-up");
             }
         };
 
         // Hiện thời gian đang phát
-        progress.addEventListener('mouseover', function () {
-            var currentTime = (audio.duration * (progress.value / 100)).toFixed(0);
-            var minutes = Math.floor(currentTime / 60);
-            var seconds = currentTime - minutes * 60;
-            var timeString = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
-            progress.setAttribute('title', timeString);
-        });
+     
+
+
     },
 
     scrollToActiveSong: function () {
@@ -301,8 +323,8 @@ const app = {
         heading.textContent = this.currentSong.name;
         thumbnail.style.backgroundImage = `url(${this.currentSong.img})`;
         audio.src = this.currentSong.path;
-
-        // console.log(heading, thumbnail, audio);
+       
+        //  console.log(heading, thumbnail, audio);
 
     },
 
@@ -323,6 +345,7 @@ const app = {
     },
 
 
+    
 
     start: function () {
         // Định nghĩa các thuộc tính cho object ( song )
